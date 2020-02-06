@@ -4,7 +4,6 @@
   "description": "Efficient post-quantum signature scheme based on Ring Learning With Errors algorithm",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
     "start": "node index.js"
   },
   "repository": {

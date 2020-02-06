@@ -8,7 +8,9 @@ const {
   poly_ntt,
   poly_mul,
   poly_add_correct,
-  sparse_mul8
+  sparse_mul8,
+  sparse_mul32,
+  poly_sub_reduce
 } = require("./poly");
 
 const {
@@ -30,7 +32,8 @@ const {
   PARAM_QINV,
   PARAM_BARR_MULT,
   PARAM_BARR_DIV,
-  PARAM_KEYGEN_BOUND_S
+  PARAM_KEYGEN_BOUND_S,
+  PARAM_H
 } = require("./params");
 
 const RADIX32 = 32;
@@ -194,7 +197,7 @@ function crypto_sign(sm, smlen, m, mlen, sk) {
     nonce = 0;
 
   //memcpy
-  randomBytes(randomness_input[CRYPTO_RANDOMBYTES], CRYPTO_RANDOMBYTES);
+  randomness_input = randomBytes(CRYPTO_RANDOMBYTES);
   cshake128(
     randomness_input[CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES],
     HM_BYTES,
