@@ -4,6 +4,8 @@ const {
   crypto_sign_open
 } = require("./src/sign");
 
-export const sign = crypto_sign;
-export const signKeypair = crypto_sign_keypair;
-export const signOpen = crypto_sign_open;
+module.exports = {
+  sign: crypto_sign,
+  signKeypair: crypto_sign_keypair,
+  signOpen: crypto_sign_open
+};
