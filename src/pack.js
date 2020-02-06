@@ -1,4 +1,4 @@
-const { PARAM_N, PARAM_K, PARAM_Q_LOG } = require("./params");
+const { PARAM_N, PARAM_K, PARAM_Q_LOG, PARAB_B_BITS } = require("./params");
 
 function encode_sk(sk, s, e, seeds, hash_pk) {
   for (let i = 0; i < PARAM_N; i++) {
@@ -94,3 +94,69 @@ function decode_pk(pk, seedA, pk_in) {
     j += 29;
   }
 }
+
+function encode_sig(sm, c, z) {
+  let maskb1 = (1 << (PARAB_B_BITS + 1)) - 1;
+  let j = 0;
+  let t = z;
+  let pt = sm;
+
+  for (let i = 0; i < (PARAM_N * (PARAM_B_BITS + 1)) / 32; i += 10) {
+    pt[i] = (t[j] & ((1 << 20) - 1)) | (t[j + 1] << 20);
+    pt[i + 1] =
+      ((t[j + 1] >> 12) & ((1 << 8) - 1)) |
+      ((t[j + 2] & maskb1) << 8) |
+      (t[j + 3] << 28);
+    pt[i + 2] = ((t[j + 3] >> 4) & ((1 << 16) - 1)) | (t[j + 4] << 16);
+    pt[i + 3] =
+      ((t[j + 4] >> 16) & ((1 << 4) - 1)) |
+      ((t[j + 5] & maskb1) << 4) |
+      (t[j + 6] << 24);
+    pt[i + 4] = ((t[j + 6] >> 8) & ((1 << 12) - 1)) | (t[j + 7] << 12);
+    pt[i + 5] = (t[j + 8] & ((1 << 20) - 1)) | (t[j + 9] << 20);
+    pt[i + 6] =
+      ((t[j + 9] >> 12) & ((1 << 8) - 1)) |
+      ((t[j + 10] & maskb1) << 8) |
+      (t[j + 11] << 28);
+    pt[i + 7] = ((t[j + 11] >> 4) & ((1 << 16) - 1)) | (t[j + 12] << 16);
+    pt[i + 8] =
+      ((t[j + 12] >> 16) & ((1 << 4) - 1)) |
+      ((t[j + 13] & maskb1) << 4) |
+      (t[j + 14] << 24);
+    pt[i + 9] = ((t[j + 14] >> 8) & ((1 << 12) - 1)) | (t[j + 15] << 12);
+    j += 16;
+  }
+}
+
+function decode_sig(c, z, sm) {
+  let j = 0;
+  let pt = sm;
+
+  for (let i = 0; i < PARAM_N; i += 16) {
+    z[i] = (pt[j + 0] << 12) >> 12;
+    z[i + 1] = (pt[j + 0] >> 20) | ((pt[j + 1] << 24) >> 12);
+    z[i + 2] = (pt[j + 1] << 4) >> 12;
+    z[i + 3] = (pt[j + 1] >> 28) | ((pt[j + 2] << 16) >> 12);
+    z[i + 4] = (pt[j + 2] >> 16) | ((pt[j + 3] << 28) >> 12);
+    z[i + 5] = (pt[j + 3] << 8) >> 12;
+    z[i + 6] = (pt[j + 3] >> 24) | ((pt[j + 4] << 20) >> 12);
+    z[i + 7] = pt[j + 4] >> 12;
+    z[i + 8] = (pt[j + 5] << 12) >> 12;
+    z[i + 9] = (pt[j + 5] >> 20) | ((pt[j + 6] << 24) >> 12);
+    z[i + 10] = (pt[j + 6] << 4) >> 12;
+    z[i + 11] = (pt[j + 6] >> 28) | ((pt[j + 7] << 16) >> 12);
+    z[i + 12] = (pt[j + 7] >> 16) | ((pt[j + 8] << 28) >> 12);
+    z[i + 13] = (pt[j + 8] << 8) >> 12;
+    z[i + 14] = (pt[j + 8] >> 24) | ((pt[j + 9] << 20) >> 12);
+    z[i + 15] = pt[j + 9] >> 12;
+    j += 10;
+  }
+}
+
+module.exports = {
+  encode_sk,
+  encode_pk,
+  decode_pk,
+  encode_sig,
+  decode_sig
+};
