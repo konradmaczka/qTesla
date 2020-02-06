@@ -1,0 +1,20 @@
+{
+  "name": "qtesla",
+  "version": "1.0.0",
+  "description": "qTESLA algorithm ported to javascript",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "qtesla",
+    "post-quantum",
+    "cryptography"
+  ],
+  "author": "Konrad Mączka",
+  "license": "ISC",
+  "dependencies": {
+    "js-sha3": "^0.8.0"
+  }
+}
